@@ -152,9 +152,9 @@ public class MainActivity extends AppCompatActivity {
 
                 tvLocation.setText(name);
 
-                float mSpeedLimit = Math.round(speedLimit);
-                int speedLimitKmh = (int) (mSpeedLimit * 1.60934f);
-                tvSpeedLimit.setText(speedLimitKmh + " Km/h");
+                float speedLimitKmh = speedLimit * 1.60934f;
+                int mSpeedLimit = Math.round(speedLimitKmh);
+                tvSpeedLimit.setText(mSpeedLimit + " Km/h");
                 Log.e("result", name + " " + speedLimit);
             }
 

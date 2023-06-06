@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onLocationChanged(Location location) {
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
+                        float speed = location.getSpeed() * 3.6f;
+                        int mSpeed = Math.round(speed);
+
                         // Sử dụng latitude và longitude ở đây
 
                         Lat = Double.toString(latitude);
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
                         tvLat.setText("Latitude (Vĩ Độ): \n" + Lat);
                         tvLon.setText("Longitude (Kinh Độ): \n" + Lon);
-
+                        tvCurrentSpeed.setText(mSpeed + " Km/h");
                     }
 
                     @Override

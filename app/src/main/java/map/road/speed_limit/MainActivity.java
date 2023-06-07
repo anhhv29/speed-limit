@@ -1,15 +1,22 @@
 package map.road.speed_limit;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +28,9 @@ import androidx.core.content.ContextCompat;
 
 import map.road.speed_limit.base.response.SnapToRoadResponse;
 import map.road.speed_limit.base.retrofit.BingMapsApiService;
+import map.road.speed_limit.bubbles.BubbleLayout;
+import map.road.speed_limit.bubbles.BubblesManager;
+import map.road.speed_limit.bubbles.OnInitializedCallback;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,15 +40,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 0;
-
+    public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     TextView tvLat, tvLon, tvLocation, tvSpeedLimit, tvCurrentSpeed;
 
     ImageView btnSetting, btnBubble;
     String Lat, Lon;
+    int mSpeed, mSpeedLimit;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onResume() {
-
         checkLocation();
         super.onResume();
     }
@@ -59,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         btnSetting = findViewById(R.id.btnSetting);
         btnBubble = findViewById(R.id.btnBubble);
 
+        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+
         btnSetting.setOnClickListener(v -> {
             startActivity(
                     new Intent(
@@ -67,6 +80,45 @@ public class MainActivity extends AppCompatActivity {
                     )
             );
         });
+
+        btnBubble.setOnClickListener(v -> {
+            if (isLayoutOverlayPermissionGranted(MainActivity.this)) {
+                initializeBubblesManager();
+
+//                Log.d("123123123","check 1");
+            } else {
+                grantLayoutOverlayPermission(MainActivity.this);
+//                Log.d("123123123","check 2");
+            }
+//            startService(new Intent(getApplicationContext(), SpeedService.class));
+        });
+    }
+
+    private BubblesManager bubblesManager = null;
+
+    private void initializeBubblesManager() {
+        if (bubblesManager != null) {
+            bubblesManager.recycle();
+        }
+
+        bubblesManager = new BubblesManager.Builder(MainActivity.this)
+                .setTrashLayout(R.layout.bubble_trash)
+                .setInitializationCallback(new OnInitializedCallback() {
+                    @Override
+                    public void onInitialized() {
+                        addNewBubble();
+                    }
+                })
+                .build();
+        bubblesManager.initialize();
+    }
+
+    private void addNewBubble() {
+        @SuppressLint("InflateParams") BubbleLayout bubbleView2 = (BubbleLayout) LayoutInflater.from(MainActivity.this)
+                .inflate(R.layout.bubble_speed, null);
+
+        bubbleView2.setShouldStickToWall(true);
+        bubblesManager.addBubble(bubbleView2, 60, 60);
     }
 
     @SuppressLint("SetTextI18n")
@@ -91,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
                         float speed = location.getSpeed() * 3.6f;
-                        int mSpeed = Math.round(speed);
+                        mSpeed = Math.round(speed);
 
                         // Sử dụng latitude và longitude ở đây
 
@@ -106,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
                         tvLat.setText("Latitude (Vĩ Độ): \n" + Lat);
                         tvLon.setText("Longitude (Kinh Độ): \n" + Lon);
                         tvCurrentSpeed.setText(mSpeed + " Km/h");
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putInt("mSpeed", mSpeed);
+                        editor.apply();
                     }
 
                     @Override
@@ -153,8 +208,12 @@ public class MainActivity extends AppCompatActivity {
                 tvLocation.setText(name);
 
                 float speedLimitKmh = speedLimit * 1.60934f;
-                int mSpeedLimit = Math.round(speedLimitKmh);
+                mSpeedLimit = Math.round(speedLimitKmh);
                 tvSpeedLimit.setText(mSpeedLimit + " Km/h");
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("mSpeedLimit", mSpeedLimit);
+                editor.apply();
+
                 Log.e("result", name + " " + speedLimit);
             }
 
@@ -187,6 +246,25 @@ public class MainActivity extends AppCompatActivity {
                         )
                 );
             }
+        }
+    }
+
+    private boolean isLayoutOverlayPermissionGranted(Activity activity) {
+        Log.v(TAG, "Granting Layout Overlay Permission..");
+        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(activity)) {
+            Log.v(TAG, "Permission is denied");
+            return false;
+        } else {
+            Log.v(TAG, "Permission is granted");
+            return true;
+        }
+    }
+
+    private void grantLayoutOverlayPermission(Activity activity) {
+        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(activity)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + activity.getPackageName()));
+            activity.startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
         }
     }
 }

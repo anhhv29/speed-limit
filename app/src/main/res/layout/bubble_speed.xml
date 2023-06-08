@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="#00FFFFFF">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -11,13 +12,14 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/limit"
-            android:layout_width="61.172dp"
-            android:layout_height="79.172dp"
+            android:layout_width="62sp"
+            android:layout_height="98sp"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="5.415dp"
             android:layout_marginTop="8.415dp"
             android:layout_marginRight="5.415dp"
             android:layout_marginBottom="8.415dp"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="2dp"
             app:cardElevation="2dp"
             app:cardUseCompatPadding="true">
@@ -29,16 +31,17 @@
                 android:orientation="vertical">
 
                 <!--text sizes set dynamically-->
+
                 <TextView
                     android:id="@+id/limit_label_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center"
-                    android:text="SPEED\nLIMIT"
-                    android:textColor="?android:textColorPrimary"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    tools:textSize="12dp" />
+                    tools:text="@string/speed_limit" />
 
                 <TextView
                     android:id="@+id/limit_text"
@@ -46,15 +49,20 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:includeFontPadding="false"
-                    android:text="--"
-                    android:textColor="?android:textColorPrimary"
-                    tools:textSize="28dp" />
+                    android:text="@string/dSpeed"
+                    android:textColor="#000000"
+                    android:textSize="28sp" />
 
                 <TextView
-                    android:id="@+id/limit_source_text"
+                    android:id="@+id/mSpeedUnits"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal" />
+                    android:layout_gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="@string/km_h"
+                    android:textColor="#000000"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp" />
 
             </LinearLayout>
 
@@ -62,8 +70,8 @@
 
         <RelativeLayout
             android:id="@+id/speedometer"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
             android:layout_below="@id/limit"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="8dp"
@@ -86,9 +94,9 @@
                     android:layout_gravity="center_horizontal"
                     android:includeFontPadding="false"
                     android:maxLines="1"
-                    android:text="--"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="24sp" />
+                    android:text="@string/dSpeed"
+                    android:textColor="#000000"
+                    android:textSize="26sp" />
 
                 <TextView
                     android:id="@+id/speedUnits"
@@ -96,9 +104,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:includeFontPadding="false"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="12sp"
-                    tools:text="km/h" />
+                    android:text="@string/km_h"
+                    android:textColor="#000000"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp" />
 
             </LinearLayout>
         </RelativeLayout>

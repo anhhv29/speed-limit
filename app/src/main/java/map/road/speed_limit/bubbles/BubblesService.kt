@@ -29,7 +29,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.math.roundToInt
 
 class BubblesService : Service() {
     private val binder: BubblesServiceBinder = BubblesServiceBinder()
@@ -38,9 +37,9 @@ class BubblesService : Service() {
     private var windowManager: WindowManager? = null
     private var layoutCoordinator: BubblesLayoutCoordinator? = null
     private var mLocationManager: LocationManager? = null
-    private val LOCATION_REFRESH_TIME = 500L // 1 seconds to update
-    private val LOCATION_REFRESH_DISTANCE = 10f // 50 meters to update
-    override fun onBind(intent: Intent): IBinder? {
+    private val refreshTime = 1000L // 0,5 seconds to update
+    private val refreshDistance = 50f // 10 meters to update
+    override fun onBind(intent: Intent): IBinder {
         return binder
     }
 
@@ -202,17 +201,16 @@ class BubblesService : Service() {
                     ).show()
                     return
                 }
-                var maxSpeed: Int
                 mLocationManager?.requestLocationUpdates(
-                    provider, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE
+                    provider, refreshTime, refreshDistance
                 ) { location ->
-                    val lat = location.latitude.toString()
-                    val lon = location.longitude.toString()
-
                     val points = "${location.latitude},${location.longitude}"
                     val includeSpeedLimit = true
-                    val speedUnit = "MPH"
+                    val speedUnit = "KPH"
                     val apiKey = "Aj5iq3vsLgF8YigYxuY0nqdU807N700gG7ehvcWeeJbJz5-wTHtgrX7D3Bp3elrl"
+
+//                    val lat = location.latitude.toString()
+//                    val lon = location.longitude.toString()
 
                     val retrofit = Retrofit.Builder().baseUrl("https://dev.virtualearth.net/")
                         .addConverterFactory(GsonConverterFactory.create()).build()
@@ -236,21 +234,18 @@ class BubblesService : Service() {
 
                                 val speedLimit = response.body()!!
                                     .getResourceSets()[0].getResources()[0].getSnappedPoints()[0].getSpeedLimit()
-                                val speedLimitKmh = speedLimit * 1.60934f
-                                maxSpeed = speedLimitKmh.roundToInt()
-                                val sMaxSpeed = maxSpeed.toString()
-                                speed.text = sMaxSpeed
+                                speed.text = speedLimit.toString()
 
-                                val intent = Intent()
-                                intent.action = "data"
-                                intent.putExtra("lat", lat)
-                                intent.putExtra("lon", lon)
-                                intent.putExtra("currentSpeed", currentSpeed)
-                                intent.putExtra("roadName", roadName)
-                                intent.putExtra("maxSpeed", sMaxSpeed)
-                                sendBroadcast(intent)
+//                                val intent = Intent()
+//                                intent.action = "data"
+//                                intent.putExtra("lat", lat)
+//                                intent.putExtra("lon", lon)
+//                                intent.putExtra("currentSpeed", currentSpeed)
+//                                intent.putExtra("roadName", roadName)
+//                                intent.putExtra("maxSpeed", sMaxSpeed)
+//                                sendBroadcast(intent)
 
-                                if (maxSpeed < (location.speed * 3.6).toInt() && maxSpeed != 0) {
+                                if (speedLimit < (location.speed * 3.6).toInt() && speedLimit != 0) {
                                     limit.setCardBackgroundColor(Color.parseColor("#FF0000"))
                                     limitLabelText.setTextColor(Color.parseColor("#FFFFFF"))
                                     limitText.setTextColor(Color.parseColor("#FFFFFF"))

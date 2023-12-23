@@ -91,10 +91,20 @@
                 android:id="@+id/btnBubble"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
                 android:background="@drawable/bubbles"
                 app:layout_constraintBottom_toBottomOf="@+id/btnSetting"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/btnSetting"
+                app:layout_constraintTop_toTopOf="@+id/btnSetting" />
+
+            <ImageView
+                android:id="@+id/btnMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:background="@drawable/map"
+                app:layout_constraintBottom_toBottomOf="@+id/btnSetting"
+                app:layout_constraintStart_toEndOf="@+id/btnBubble"
                 app:layout_constraintTop_toTopOf="@+id/btnSetting" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,10 +4,8 @@ import static android.content.ContentValues.TAG;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,6 +16,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     TextView tvLat, tvLon, tvLocation, tvSpeedLimit, tvCurrentSpeed;
 
-    ImageView btnSetting, btnBubble;
+    ImageView btnSetting, btnBubble, btnMap;
     String Lat, Lon;
     int mSpeed, mSpeedLimit;
 
@@ -79,17 +78,23 @@ public class MainActivity extends AppCompatActivity {
 
         btnSetting = findViewById(R.id.btnSetting);
         btnBubble = findViewById(R.id.btnBubble);
+        btnMap = findViewById(R.id.btnMap);
 
 //        IntentFilter filter = new IntentFilter("data");
 //        registerReceiver(mBroadcast, filter);
 
-        btnSetting.setOnClickListener(v -> {
-            startActivity(
-                    new Intent(
-                            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.fromParts("package", getPackageName(), null)
-                    )
-            );
+        btnSetting.setOnClickListener(v -> startActivity(
+                new Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", getPackageName(), null)
+                )
+        ));
+
+        btnMap.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, MapActivity.class);
+            startActivity(intent);
+            finishAffinity();
+            finish();
         });
 
         btnBubble.setOnClickListener(v -> {

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -20,12 +21,17 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/ic_speed_limit"
+        android:icon="@drawable/ic_map"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_speed_limit"
+        android:roundIcon="@drawable/ic_map"
         android:supportsRtl="true"
         android:theme="@style/Theme.SpeedLimit"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyD-VlqYjUAL-z53-qrZTh-zS_yw0t058Ms" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -42,5 +48,9 @@
             android:foregroundServiceType="location"
             android:permission="android.permission.SYSTEM_ALERT_WINDOW"
             android:stopWithTask="false" />
+
+        <activity
+            android:name=".MapActivity"
+            android:exported="true" />
     </application>
 </manifest>
